@@ -11,7 +11,6 @@ test("should solve 2 part 1", async () => {
 const input2 = Bun.file('./test-input.txt')
 test("should solve 2 part 2", async () => {
   const text = await input2.text()
-  const res = solve(text.trim())['1']
-  console.log({ res })
-  expect(res).toBe(33);
+  const res = solve(text.trim())['2']
+  expect(res).toBe(2286);
 })

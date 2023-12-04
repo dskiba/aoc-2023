@@ -12,16 +12,18 @@ const MAX = {
 
 export function solve(input: string): {1: number, 2: number} {
   const games = count(input.split('\n'))
-  const filtered = filterSets(games)
-  const total = calculateResult(filtered)
 
-  return {1: total, 2: total}
+  const part1 = calculateResult(filterSets(games))
+
+  const part2 = multiplyCubes(games)
+
+
+  return {1: part1, 2: part2}
 }
 
 function filterSets(sets: Set[]): Set[] {
   return sets.filter(set => {
     return Object.entries(set.cubes).every(([color, num]) => {
-      console.log({ num, color, max: MAX[color as keyof typeof MAX] })
       return num <= MAX[color as keyof typeof MAX]
     })
   })
@@ -61,7 +63,15 @@ function calculateResult(sets: Set[]): number {
 }
 
 
+function multiplyCubes(sets: Set[]): number {
+  return sets.reduce((acc, set) => {
+    const res = set.cubes.blue * set.cubes.red * set.cubes.green
+    return acc + res
+  }, 0)
+}
+
 const text = await Bun.file('./input.txt').text()
 const res1 = solve(text.trim())['1']
+const res2 = solve(text.trim())['2']
 await Bun.write('./result.txt', String(res1))
-// await Bun.write('./result-2.txt', String(solve(text.trim(), true)))
+await Bun.write('./result-2.txt', String(res2))
