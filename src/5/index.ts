@@ -2,45 +2,40 @@ type Mapper = Map<number, number>
 type Track = Array<Mapper>
 
 export function solve(input: string): { 1: number, 2: number } {
-  const [seeds, ...maps] = input.split('\n\n')
+  const [seeds, ...lines] = input.split('\n\n')
 
   const seedsNums = seeds!.split(': ')[1]!.split(' ').map((s) => Number(s))
 
-  const track: Track = []
+  const maps: Array<Array<{ dist: number, source: number, len: number }>> = []
 
-  // const first = maps[0]!
-  for (const map of maps) {
-    const mapper: Mapper = new Map()
-    const [title, lines] = map.split(':\n') as [string, string]
+  for (const line of lines) {
+    maps.push([])
+    const [_, lines] = line.split(':\n') as [string, string]
     for (const line of lines.split('\n')) {
-      const [dist, source, len] = line.split(' ')
+      const [dist, source, len] = line.split(' ') as [string, string, string]
 
-      for (let i = 0; i < Number(len); i++) {
-        mapper.set(Number(source) + i, Number(dist) + i)
+      maps[maps.length - 1]!.push({ dist: Number(dist), source: Number(source), len: Number(len) })
+    }
+  }
+
+
+  function findLock(seed: number) {
+    let curNum = seed
+    for (const map of maps) {
+      for (const { dist, source, len } of map) {
+        if (source <= curNum && curNum < source + len) {
+          curNum = dist + (curNum - source)
+          break
+        }
       }
     }
-    track.push(mapper)
+    return curNum
   }
 
+  const seedsRes = seedsNums.map((seed) => findLock(seed))
+  const min = Math.min(...seedsRes)
 
-  const tracks: Array<Array<number>> = []
-  for (let i = 0; i < seedsNums.length; i++) {
-    const seed = seedsNums[i]!
-    const transition: Array<number> = [seed]
-    tracks.push(transition)
-    let trackedItem = seed
-    for (const mapper of track) {
-      trackedItem = mapper.get(trackedItem) || trackedItem
-      tracks[i]!.push(trackedItem)
-    }
-  }
-
-  const part1 = tracks.reduce((acc, track) => {
-    const last = track[track.length - 1]!
-    return Math.min(acc, last)
-  }, Infinity)
-
-  return { 1: part1, 2: 0 }
+  return { 1: min, 2: 0 }
 }
 
 

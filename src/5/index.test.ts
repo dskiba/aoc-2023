@@ -9,14 +9,12 @@ test("should solve 5 part 1 - test input", async () => {
   expect(res).toBe(35);
 })
 
-// const input = Bun.file('./input.txt')
-// test("should solve 5 part 1", async () => {
-//   const text = await input.text()
-//   console.log('asd')
-//   const res = solve(text.trim())['1']
-//   console.log({ res })
-//   expect(res).toBe(3588);
-// })
+const input = Bun.file('./input.txt')
+test("should solve 5 part 1", async () => {
+  const text = await input.text()
+  const res = solve(text.trim())['1']
+  expect(res).toBe(165788812);
+})
 
 // test("should solve X part 2", async () => {
 //   const text = await input2.text()
