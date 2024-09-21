@@ -1,6 +1,3 @@
-type Mapper = Map<number, number>
-type Track = Array<Mapper>
-
 export function solve(input: string): { 1: number, 2: number } {
   const [seeds, ...lines] = input.split('\n\n')
 
@@ -21,6 +18,7 @@ export function solve(input: string): { 1: number, 2: number } {
 
   function findLock(seed: number) {
     let curNum = seed
+    console.log('curNum', curNum)
     for (const map of maps) {
       for (const { dist, source, len } of map) {
         if (source <= curNum && curNum < source + len) {
@@ -35,11 +33,32 @@ export function solve(input: string): { 1: number, 2: number } {
   const seedsRes = seedsNums.map((seed) => findLock(seed))
   const min = Math.min(...seedsRes)
 
-  return { 1: min, 2: 0 }
+  const part2Seeds = []
+  for (let i = 0; i < seedsNums.length; i++) {
+
+    const seed = seedsNums[i]!
+    if ((i+1)% 2 === 1) {
+      part2Seeds.push([])
+      for (let j = 0; j < seedsNums[i + 1]!; j++) {
+        part2Seeds[part2Seeds.length - 1].push(seed + j)
+      }
+    }
+  }
+  const part2seedRes = part2Seeds.map((seed) => {
+    const res = seed.map((s) => findLock(s))
+    console.log({ res })
+    return Math.min(...res)
+  })
+  const part2min = Math.min(...part2seedRes)
+  return { 1: min, 2: part2min }
 }
 
 
-// const res = solve(text.trim())
-// const text = await Bun.file('./input.txt').text()
+
+
+// const text = await Bun.file('./test-input.txt').text()
+const text = await Bun.file('./input.txt').text()
+const res = solve(text.trim())
+console.log({ res })
 // await Bun.write('./result.txt', String(res['1']))
 // await Bun.write('./result-2.txt', String(res['2']))
